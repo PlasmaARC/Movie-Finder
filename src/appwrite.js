@@ -4,8 +4,7 @@ const PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID;
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
 const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
 
-// Validate environment variables
-// Add this before client initialization
+// Validating environment variables
 if (!PROJECT_ID || !DATABASE_ID || !COLLECTION_ID) {
     throw new Error("Missing Appwrite environment variables!");
 }
@@ -13,8 +12,6 @@ if (!PROJECT_ID || !DATABASE_ID || !COLLECTION_ID) {
 const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')
     .setProject(PROJECT_ID);
-
-console.log("Appwrite client initialized:", client.config);
 
 const database = new Databases(client);
 
@@ -55,4 +52,17 @@ export const updateSearchTerm = async (searchTerm, movie) => {
         throw error; // Propagate error to caller
     }
 };
+
+export const getTrendingMovies = async () => {
+    try {
+     const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
+       Query.limit(5),
+       Query.orderDesc("count")
+     ])
+   
+     return result.documents;
+    } catch (error) {
+     console.error(error);
+    }
+   }
 

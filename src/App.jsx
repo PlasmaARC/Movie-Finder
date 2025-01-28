@@ -5,7 +5,7 @@ import MovieCard from "./components/MovieCard";
 import "./App.css";
 import { useState, useEffect } from "react";
 import { useDebounce } from "react-use";
-import { updateSearchTerm } from "./appwrite";
+import { updateSearchTerm,getTrendingMovies } from "./appwrite";
 
 
 const API_URL = "https://api.themoviedb.org/3";
@@ -26,6 +26,7 @@ function App() {
   const [moviesList, setMoviesList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const [trendingMovies, setTrendingMovies] = useState([])
 
   useDebounce(()=>
     setDebouncedSearchTerm(searchTerm),500, [searchTerm]
@@ -66,9 +67,22 @@ function App() {
     }
   };
 
+  const loadTrendingMovies = async () =>{
+    try {
+      const movies = await getTrendingMovies();
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.log(`Error fetching trending movies: ${error}`)
+    }
+  }
+
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    loadTrendingMovies()
+  },[])
 
   return (
     <main>
@@ -82,6 +96,20 @@ function App() {
             </h1>
             <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           </header>
+          {trendingMovies.length > 0 && (
+            <section className="trending">
+              <h2>Trending Movies</h2>
+
+              <ul>
+                {trendingMovies.map((movie,index) => (
+                  <li key={movie.$id}>
+                    <p>{index + 1 }</p>
+                    <img src={movie.poster_url} alt={movie.title} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           <section className="all-movies">
             <h2 className="mt-[40px] text-3xl">All Movies</h2>
             {isLoading ? (
