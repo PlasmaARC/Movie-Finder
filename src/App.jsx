@@ -86,11 +86,12 @@ function App() {
 
   return (
     <main>
-      <div className="pattern">
+      <div className="pattern"/>
         <div className="wrapper">
           <header>
+          <p className="text-gradient text-4xl text-center font-extrabold">THE MOVIE CLUB🎞️</p>
             <img src={hero} alt="Hero Image Background" />
-            <h1>
+            <h1 className="text-2xl">
               Find <span className="text-gradient">Movies</span> You ll Enjoy
               Without the Hassle
             </h1>
@@ -98,7 +99,7 @@ function App() {
           </header>
           {trendingMovies.length > 0 && (
             <section className="trending">
-              <h2>Trending Movies</h2>
+              <h2 className="text-center text-xl">Trending Movies</h2>
 
               <ul>
                 {trendingMovies.map((movie,index) => (
@@ -111,7 +112,7 @@ function App() {
             </section>
           )}
           <section className="all-movies">
-            <h2 className="mt-[40px] text-3xl">All Movies</h2>
+            <h2 className="text-center text-xl">All Movies</h2>
             {isLoading ? (
               <Spinner />
             ) : errorMessage ? (
@@ -125,7 +126,6 @@ function App() {
             )}
           </section>
         </div>
-      </div>
     </main>
   );
 }
