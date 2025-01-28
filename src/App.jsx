@@ -7,15 +7,16 @@ import { useState, useEffect } from "react";
 import { useDebounce } from "react-use";
 import { updateSearchTerm } from "./appwrite";
 
+
 const API_URL = "https://api.themoviedb.org/3";
 
-
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 const API_OPTIONS = {
   method: "GET",
   headers: {
     accept: "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODQwNTBmNjBkNDk5NzM1NTkzMzVhN2Q0ZTQ0M2MxOCIsIm5iZiI6MTczODA0NDkxOC45NCwic3ViIjoiNjc5ODc1ZjZiYTRmOTQxZjQ0OGYyZmM4Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.j9p0CEu72NRBd046lLKUsLzW_58PAGN7AYxoeGbX1ko`,
+    Authorization: `Bearer ${API_KEY}`,
   },
 };
 
@@ -35,7 +36,7 @@ function App() {
     setErrorMessage("");
     try {
       const endpoint = query
-        ? `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=1`
+        ? `${API_URL}/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=1`
         : `${API_URL}/discover/movie?language=en-US&page=1&sort_by=popularity.desc`;
 
       const response = await fetch(endpoint, API_OPTIONS);
@@ -53,7 +54,10 @@ function App() {
       }
 
       setMoviesList(data.results || []);
-      updateSearchTerm()
+
+      if(query && data.results.length > 0){
+        await updateSearchTerm(query,data.results[0])
+      }
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage("Error while catching Movies. Please try again later.");
